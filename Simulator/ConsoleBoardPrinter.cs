@@ -1,31 +1,52 @@
 ﻿using System;
+using DingDing.Core;
 
 namespace DingDing.Simulator
 {
-    public class ConsoleBoardPrinter
+    public static class ConsoleBoardPrinter
     {
-
-        public void Print(grid) // Prints the 2D array (game board) to the console.
+        public static void Print(Board board)
         {
             Console.WriteLine();
-            for (int y = 0; y < grid.Height-1; y++)
+
+            for (int row = 0; row < Board.Rows; row++)
             {
-                for (int x = 0; x < grid.Width-1; x++)
+                for (int column = 0; column < Board.Columns; column++)
                 {
-                    if (grid.Cells[x, y] == TileType.Empty)
-                    {
-                        Console.Write(". ");
-                    }
-                    else
-                    {
-                        Console.Write((int)Cells[x, y] + " ");
-                    }
+                    Console.Write(LetterOf(board[row, column]) + " ");
                 }
+
                 Console.WriteLine();
             }
+
             Console.WriteLine();
         }
 
+        private static char LetterOf(Piece piece)
+        {
+            if (piece == null)
+            {
+                return '.';
+            }
+
+            switch (piece.Kind)
+            {
+                case PieceKind.Medal: return 'm';
+                case PieceKind.Trophy: return 't';
+                case PieceKind.Belt: return 'b';
+                case PieceKind.Gong: return 'g';
+            }
+
+            switch (piece.Color)
+            {
+                case PieceColor.Red: return 'R';
+                case PieceColor.Blue: return 'B';
+                case PieceColor.Orange: return 'O';
+                case PieceColor.Green: return 'G';
+                case PieceColor.Purple: return 'P';
+            }
+
+            return '?';
+        }
     }
 }
-

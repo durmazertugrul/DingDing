@@ -1,37 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DingDing.Core
 {
-    internal class BoardInitializer
+    public class BoardInitializer
     {
-        private Random random = new Random();
+        private readonly Random random;
 
-        public void FillRandom(Grid grid) // Fills the board randomly at the start of the game.
+        public BoardInitializer(Random random)
         {
-            for (int x = 0; x < grid.Width; x++)
-            {
-                for (int y = 0; y < grid.Height; y++)
-                {
-                    grid.Cells[x, y] = (TileType)random.Next(0, 5);
-                }
-            }
-        
+            this.random = random;
         }
 
-        public void SpawnNewTiles(Grid grid) // Fills the empty spaces left after matches are cleared.
+        public PieceColor NextColor()
         {
-            for (int x = 0; x < grid.Width; x++)
+            return (PieceColor)random.Next(1, 6); //Colors between 1 to 5
+        }
+
+        public void FillRandom(Board board)
+        {
+            for (int row = 0; row < Board.Rows; row++)
             {
-                for (int y = 0; y < grid.Height; y++)
+                for (int column = 0; column < Board.Columns; column++)
                 {
-                    if (grid.Cells[x, y] == TileType.Empty)
+                    board[row, column] = new Piece(NextColor(), PieceKind.Normal);
+                }
+            }
+        }
+
+        public void SpawnNewPieces(Board board)
+        {
+            for (int row = 0; row < Board.Rows; row++)
+            {
+                for (int column = 0; column < Board.Columns; column++)
+                {
+                    if (board.IsEmpty(row, column))
                     {
-                        grid.Cells[x, y] = (TileType)random.Next(0, 5);
+                        board[row, column] = new Piece(NextColor(), PieceKind.Normal);
                     }
                 }
             }
         }
-
     }
 }

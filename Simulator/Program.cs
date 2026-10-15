@@ -1,51 +1,62 @@
-﻿namespace Match3_Console_Engine
+﻿using System;
+using System.Collections.Generic;
+using DingDing.Core;
+
+namespace DingDing.Simulator
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            
-                Grid grid = new Grid(8, 8);
-                BoardInitializer initializer = new BoardInitializer();
-                MatchDetector detector = new MatchDetector();
+            int seed = 12345;
+            Random random = new Random(seed);
 
-                initializer.FillRandom(grid); //Açılışta tahta rastgele taşlarla dolar.
+            Board board = new Board();
+            BoardInitializer initializer = new BoardInitializer(random);
 
-                Console.WriteLine("Initial Board:");
-                grid.Print();
+            initializer.FillRandom(board);
 
-                bool matchFound;
-                // Hiç eşleşme kalmayana kadar devam eder.
-                do
+            Console.WriteLine("Initial board, seed " + seed + ":");
+            ConsoleBoardPrinter.Print(board);
+
+            bool matchFound;
+
+            do
+            {
+                List<MatchGroup> groups = MatchFinder.FindMatchGroups(board);
+                matchFound = groups.Count > 0;
+
+                if (matchFound)
                 {
-                    List<(int x, int y)> matches = detector.FindMatches(grid);
-                    matchFound = matches.Count > 0;
+                    Console.WriteLine("Found " + groups.Count + " group(s). Clearing...");
 
-                    if (matchFound)
+                    foreach (MatchGroup group in groups)
                     {
-                        Console.WriteLine("Match Found. Clearing...");
-                        detector.ClearMatches(grid, matches);
-                        grid.Print();
+                        Console.WriteLine("  " + group.Color
+                            + ", " + group.Cells.Count + " cells"
+                            + ", shape " + MatchFinder.ClassifyShape(group));
 
-                        Console.WriteLine("Applying Gravity...");
-                        grid.ApplyGravity();
-                        grid.Print();
-
-                        Console.WriteLine("Spawning New Tiles...");
-                        initializer.SpawnNewTiles(grid);
-                        grid.Print();
+                        foreach (Cell cell in group.Cells)
+                        {
+                            board[cell] = null;
+                        }
                     }
 
-                } while (matchFound); //Yeni eklenen taşlarla birlikte yine eşleşme varsa işlem yapmaya devam eder.
+                    ConsoleBoardPrinter.Print(board);
 
-                Console.WriteLine("Final Stable Board:");
-                grid.Print();
+                    Console.WriteLine("Applying gravity...");
+                    board.ApplyGravity();
+                    ConsoleBoardPrinter.Print(board);
 
+                    Console.WriteLine("Spawning new pieces...");
+                    initializer.SpawnNewPieces(board);
+                    ConsoleBoardPrinter.Print(board);
+                }
+            }
+            while (matchFound);
 
-                //Ekran, tablo tamamlanır tamamlanmaz kapanmaması için bekletir.
-                Console.WriteLine("The process is complete. Press any key to exit...");
-                Console.ReadKey();
-        }
+            Console.WriteLine("Final stable board:");
+            ConsoleBoardPrinter.Print(board);
         }
     }
-
+}

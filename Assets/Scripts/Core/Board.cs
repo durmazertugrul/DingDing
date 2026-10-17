@@ -52,29 +52,5 @@ namespace DingDing.Core
 
             return copy;
         }
-
-        
-        public void ApplyGravity()
-        {
-            for (int column = 0; column < Columns; column++)
-            {
-                int writeRow = Rows - 1;
-
-                for (int readRow = Rows - 1; readRow >= 0; readRow--)
-                {
-                    if (pieces[readRow, column] != null)
-                    {
-                        pieces[writeRow, column] = pieces[readRow, column];
-
-                        if (readRow != writeRow)
-                        {
-                            pieces[readRow, column] = null;
-                        }
-
-                        writeRow--;
-                    }
-                }
-            }
-        }
     }
 }

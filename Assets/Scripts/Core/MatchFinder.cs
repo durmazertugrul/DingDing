@@ -198,7 +198,7 @@ namespace DingDing.Core
             return longestRun;
         }
 
-        public static PieceColor ColorAt(Board board, int row, int column)
+        private static PieceColor ColorAt(Board board, int row, int column)
         {
             Piece piece = board[row, column];
 

@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace DingDing.Core
 {
+    // Resolves player actions by swapping pieces or activating specials,
+    // detecting matches, creating special pieces, clearing cells, and processing
+    // gravity, refills, and cascades while recording events and move results.
     public static class MoveResolver 
     {
         private class PendingSpecial

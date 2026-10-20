@@ -1,5 +1,7 @@
 namespace DingDing.Core
 {
+    // Represents a board cell using its row and column indices,
+    // with value equality, hash code generation, and string formatting.
     public struct Cell
     {
         public int Row { get; }

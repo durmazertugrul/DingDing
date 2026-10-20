@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 namespace DingDing.Core
 {
+    // Handles piece gravity and board refilling by moving existing pieces
+    // downward, filling empty cells with new pieces, and recording the changes as events.
     public static class BoardGravity
     {
         public static void ApplyGravity(Board board, List<object> events)

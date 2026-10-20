@@ -1,5 +1,7 @@
 namespace DingDing.Core
 {
+    // Represents the 8x8 game board, provides indexed access to pieces,
+    // checks cell boundaries and occupancy, and creates a deep copy of the board.
     public class Board
     {
         public const int Rows = 8;

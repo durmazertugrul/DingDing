@@ -12,7 +12,8 @@ public class BoardView : MonoBehaviour
     public Sprite[] specialSprites; // indexed by PieceKind, element 0 unused
 
     public BoardInput boardInput;
-
+    public Color[] normalFxColors;
+    public Color specialFxColor; 
     public Vector2 CellSize { get; private set; }
     public GameObject cellPrefab;
     public TileView tilePrefab;
@@ -28,6 +29,7 @@ public class BoardView : MonoBehaviour
 
     // How far above the board a spawned tile starts.
     public float BoardHeight { get; private set; }
+    public float BoardWidth { get; private set; }
 
     private void Awake()
     {
@@ -66,7 +68,14 @@ public class BoardView : MonoBehaviour
         }
 
         BoardHeight = padding.top + Board.Rows * cellSize.y + (Board.Rows - 1) * spacing.y;
+        BoardWidth = padding.left + Board.Columns * cellSize.x + (Board.Columns - 1) * spacing.x;
         CellSize = cellSize;
+    }
+
+    // Where the tiles gather during a shuffle.
+    public Vector2 CentrePosition
+    {
+        get { return new Vector2(BoardWidth * 0.5f, -BoardHeight * 0.5f); }
     }
 
     private Sprite SpriteFor(Piece piece)
@@ -192,4 +201,16 @@ public class BoardView : MonoBehaviour
             }
         }
     }
+
+    // Effect sprites are white, so they take the colour of the piece that popped.
+    public Color ColorOf(Piece piece)
+    {
+        if (piece.IsSpecial())
+            return specialFxColor;
+
+        return normalFxColors[(int)piece.Color];
+    }
+
+
+
 }

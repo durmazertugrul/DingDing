@@ -13,6 +13,7 @@ public class TileView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     public BoardInput boardInput;
     public Cell Cell { get; set; }
     public Piece Piece { get; private set; }
+    private Tween wobbleTween;
 
     public RectTransform RectTransform { get; private set; }
 
@@ -78,19 +79,24 @@ public class TileView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     {
         boardInput.OnTileReleased(eventData);
     }
-
-    // Played when a tapped piece is not special.
     public Tween Wobble(AnimationSettings settings)
     {
-        return RectTransform.DOPunchRotation(new Vector3(0, 0, 8f), settings.invalidSwapDuration);
+        // A punch that is still running would stack and leave the tile tilted.
+        if (wobbleTween != null && wobbleTween.IsActive())
+            wobbleTween.Kill();
+
+        RectTransform.localRotation = Quaternion.identity;
+
+        wobbleTween = RectTransform.DOPunchRotation(new Vector3(0f, 0f, 8f), settings.invalidSwapDuration).OnComplete(() => RectTransform.localRotation = Quaternion.identity);
+
+        return wobbleTween;
+    }
+
+    // Played when a falling tile lands.
+    public Tween LandSquash(AnimationSettings settings)
+    {
+        return RectTransform.DOPunchScale(new Vector3(0.12f, -0.12f, 0f), settings.landSquashDuration);
     }
         
-
-    // Played when a swap is rejected.
-    public Tween ShakeInvalid(AnimationSettings settings)
-    {
-        return RectTransform.DOShakePosition(settings.invalidSwapDuration, new Vector3(10f, 0, 0));
-
-    }
 
 }

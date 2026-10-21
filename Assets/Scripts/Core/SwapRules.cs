@@ -44,7 +44,7 @@ namespace DingDing.Core
             return result;
         }
 
-        private static bool HasRunThrough(Board board, Cell cell) 
+        public static bool HasRunThrough(Board board, Cell cell)
         {
             PieceColor color = ColorAt(board, cell.Row, cell.Column);
 
@@ -53,14 +53,15 @@ namespace DingDing.Core
             int horizontalCount = 1;
 
             int leftColumn = cell.Column - 1;
-            while (leftColumn >= 0 && ColorAt(board, cell.Row, leftColumn) == color) 
+            while (leftColumn >= 0 && ColorAt(board, cell.Row, leftColumn) == color)
             {
                 horizontalCount++;
                 leftColumn--;
             }
 
             int rightColumn = cell.Column + 1;
-            while (rightColumn < Board.Columns && ColorAt(board, cell.Row, rightColumn) == color) 
+            while (rightColumn < Board.Columns
+                   && ColorAt(board, cell.Row, rightColumn) == color)
             {
                 horizontalCount++;
                 rightColumn++;
@@ -69,15 +70,15 @@ namespace DingDing.Core
             if (horizontalCount >= 3) return true;
 
             int verticalCount = 1;
+
             int upRow = cell.Row - 1;
-            while (upRow >= 0 && ColorAt(board, upRow, cell.Column) == color) 
+            while (upRow >= 0 && ColorAt(board, upRow, cell.Column) == color)
             {
                 verticalCount++;
                 upRow--;
             }
 
             int downRow = cell.Row + 1;
-
             while (downRow < Board.Rows && ColorAt(board, downRow, cell.Column) == color)
             {
                 verticalCount++;
@@ -85,8 +86,6 @@ namespace DingDing.Core
             }
 
             if (verticalCount >= 3) return true;
-
-
 
             return false;
         }

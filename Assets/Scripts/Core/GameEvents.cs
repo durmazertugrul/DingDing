@@ -14,6 +14,16 @@ namespace DingDing.Core
             SecondCell = secondCell;
         }
     }
+    public class BoardShuffled
+    {
+        public Board NewLayout { get; }
+
+        public BoardShuffled(Board newLayout)
+        {
+            NewLayout = newLayout;
+        }
+    }
+
 
     public class SpecialsActivated
     {

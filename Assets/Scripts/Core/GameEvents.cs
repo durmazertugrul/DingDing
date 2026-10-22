@@ -75,4 +75,16 @@ namespace DingDing.Core
             Pieces = pieces;
         }
     }
+
+    public class OpponentDamaged
+    {
+        public int Amount {  get; }
+        public int HealthAfter {  get; }
+
+        public OpponentDamaged(int amount, int healthAfter)
+        {
+            Amount = amount;
+            HealthAfter = healthAfter;
+        }
+    }
 }

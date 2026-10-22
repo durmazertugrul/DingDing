@@ -8,6 +8,20 @@ namespace DingDing.Tests
     [TestFixture]
     public class ResolveTests
     {
+        // Health high enough that no cascade can ever end early here; these
+        // tests are about resolving, not about knockouts.
+        private static Match MatchWith(Board board, int seed)
+        {
+            LevelInfo level = new LevelInfo(1, Difficulty.Normal, 1000000,
+                                            12, 12, 12);
+            Match match = new Match(level, seed);
+            match.Board = board;
+            match.CurrentRound = 1;
+            match.RoundMoveCount = 12;
+            match.MovesLeftInRound = 12;
+            return match;
+        }
+
         private static PlayerAction Swap(int firstRow, int firstColumn,
                                          int secondRow, int secondColumn)
         {
@@ -55,7 +69,7 @@ namespace DingDing.Tests
 
             List<object> events = new List<object>();
             MoveResult result = MoveResolver.ResolveAction(
-                board, Swap(1, 2, 0, 2), new Random(1), events);
+                MatchWith(board, 1), Swap(1, 2, 0, 2), events);
 
             Assert.That(result.Steps[0].ClearedColors.Count, Is.EqualTo(3));
             Assert.That(result.Steps[0].SpecialActivations, Is.EqualTo(0));
@@ -82,7 +96,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(1, 2, 0, 2), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Swap(1, 2, 0, 2),
+                                       events);
 
             List<SpecialCreated> created = CreatedSpecialEvents(events);
 
@@ -106,7 +121,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(1, 2, 2, 2), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Swap(1, 2, 2, 2),
+                                       events);
 
             List<SpecialCreated> created = CreatedSpecialEvents(events);
 
@@ -130,7 +146,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(2, 3, 3, 3), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Swap(2, 3, 3, 3),
+                                       events);
 
             List<SpecialCreated> created = CreatedSpecialEvents(events);
 
@@ -154,7 +171,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(3, 0, 4, 0), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Swap(3, 0, 4, 0),
+                                       events);
 
             List<SpecialCreated> created = CreatedSpecialEvents(events);
 
@@ -195,7 +213,7 @@ namespace DingDing.Tests
 
             List<object> events = new List<object>();
             MoveResult result = MoveResolver.ResolveAction(
-                board, Swap(6, 4, 7, 4), new Random(1), events);
+                MatchWith(board, 1), Swap(6, 4, 7, 4), events);
 
             Assert.That(result.CascadeCount, Is.GreaterThanOrEqualTo(1));
             Assert.That(result.CreatedSpecials.Count, Is.EqualTo(0));
@@ -218,7 +236,7 @@ namespace DingDing.Tests
 
             List<object> events = new List<object>();
             MoveResult result = MoveResolver.ResolveAction(
-                board, Tap(3, 2), new Random(1), events);
+                MatchWith(board, 1), Tap(3, 2), events);
 
             Assert.That(result.Steps[0].SpecialActivations, Is.EqualTo(1));
             Assert.That(result.CascadeCount, Is.GreaterThanOrEqualTo(1));
@@ -240,7 +258,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(1, 2, 0, 2), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Swap(1, 2, 0, 2),
+                                       events);
 
             List<SpecialCreated> created = CreatedSpecialEvents(events);
 
@@ -263,7 +282,7 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Tap(3, 2), new Random(1), events);
+            MoveResolver.ResolveAction(MatchWith(board, 1), Tap(3, 2), events);
 
             SpecialsActivated activated = null;
 
@@ -276,7 +295,8 @@ namespace DingDing.Tests
                 }
             }
 
-            Assert.That(activated, Is.Not.Null, "no SpecialsActivated event was recorded");
+            Assert.That(activated, Is.Not.Null,
+                "no SpecialsActivated event was recorded");
             Assert.That(activated.Activations.Count, Is.EqualTo(2));
             Assert.That(activated.Activations[0].Kind, Is.EqualTo(PieceKind.Medal));
             Assert.That(activated.Activations[1].Kind, Is.EqualTo(PieceKind.Trophy));
@@ -305,7 +325,8 @@ namespace DingDing.Tests
                 "OGPRBOGP");
 
             List<object> events = new List<object>();
-            MoveResolver.ResolveAction(board, Swap(1, 2, 0, 2), new Random(7), events);
+            MoveResolver.ResolveAction(MatchWith(board, 7), Swap(1, 2, 0, 2),
+                                       events);
 
             string signature = "";
 

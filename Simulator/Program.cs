@@ -1,89 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using DingDing.Core;
+using DingDing.Core.Cards;
 
 namespace DingDing.Simulator
 {
-    public class Program
+    // Plays one headless match with random legal moves and prints the result.
+    public static class Program
     {
         public static void Main(string[] args)
         {
-            int seed = 12345;
-            if (args.Length == 1 && int.TryParse(args[0], out int number))
-                seed = number;
+            int levelNumber = 1;
+            int seed = 42;
 
-            Random random = new Random(seed);
-            Board board = BoardInitializer.CreateStartingBoard(random);
+            if (args.Length > 0) int.TryParse(args[0], out levelNumber);
+            if (args.Length > 1) int.TryParse(args[1], out seed);
 
-            Console.WriteLine("Starting board, seed " + seed + ":");
-            ConsoleBoardPrinter.Print(board);
+            LevelInfo level = LevelTable.GetLevel(levelNumber);
+            Match match = MatchFlow.StartMatch(level, seed).Match;
 
-            List<(Cell, Cell)> swaps = SwapRules.ListValidSwaps(board);
-            Console.WriteLine(swaps.Count + " valid swaps on this board.");
+            Random chooser = new Random(seed);
 
-            if (swaps.Count == 0)
+            for (int guard = 0; guard < 500; guard++)
             {
-                Console.WriteLine("No move to play.");
-                return;
-            }
+                if (match.Phase == MatchPhase.Finished) break;
 
-            Cell firstCell = swaps[0].Item1;
-            Cell secondCell = swaps[0].Item2;
-            Console.WriteLine("Playing " + firstCell + " with " + secondCell + ".");
+                if (match.Phase == MatchPhase.Corner)
+                {
+                    List<CardOffer> offers = CardRules.OfferCards(match);
+                    CardOffer picked = offers[chooser.Next(0, offers.Count)];
 
-            PlayerAction action = new PlayerAction(ActionType.Swap, firstCell, secondCell);
-            List<object> events = new List<object>();
-            MoveResult result = MoveResolver.ResolveAction(board, action, random, events);
+                    Console.WriteLine("Corner: " + picked.Card.Id);
+                    MatchFlow.SelectCornerCard(match, picked);
+                    continue;
+                }
 
-            Console.WriteLine();
-            Console.WriteLine("Events:");
+                List<(Cell, Cell)> swaps = SwapRules.ListValidSwaps(match.Board);
+                if (swaps.Count == 0)
+                {
+                    Console.WriteLine("No legal move and no shuffle helped.");
+                    break;
+                }
 
-            foreach (object gameEvent in events)
-            {
-                Console.WriteLine("  " + DescribeEvent(gameEvent));
-            }
+                var swap = swaps[chooser.Next(0, swaps.Count)];
+                PlayerAction action = new PlayerAction(ActionType.Swap,
+                                                        swap.Item1, swap.Item2);
 
-            Console.WriteLine();
-            Console.WriteLine("Steps: " + result.Steps.Count
-                + ", cascades: " + result.CascadeCount
-                + ", specials created: " + result.CreatedSpecials.Count);
-
-            foreach ((PieceKind Kind, int GroupSize) createdSpecial in result.CreatedSpecials)
-            {
-                Console.WriteLine("  " + createdSpecial.Kind
-                    + " from " + createdSpecial.GroupSize + " pieces");
+                if (MatchFlow.PlayAction(match, action) == null)
+                    Console.WriteLine("Action refused: " + swap.Item1
+                                      + " " + swap.Item2);
             }
 
             Console.WriteLine();
-            Console.WriteLine("Final board:");
-            ConsoleBoardPrinter.Print(board);
-        }
+            Console.WriteLine("Level " + levelNumber + ", seed " + seed);
+            Console.WriteLine("Outcome        " + match.Outcome);
+            Console.WriteLine("Health left    " + match.OpponentHealth
+                              + " of " + level.StartingHealth);
+            Console.WriteLine("Score          " + match.Score);
+            Console.WriteLine("Knockout move  " + match.KnockoutMove);
 
-        private static string DescribeEvent(object gameEvent)
-        {
-            // Turns one event into a readable console line.
-            // The simulator only prints them; Unity reads the same list to play animations.
-            if (gameEvent is PiecesSwapped swapped)
-                return "PiecesSwapped " + swapped.FirstCell + " " + swapped.SecondCell;
-
-            if (gameEvent is SpecialsActivated activated)
-                return "SpecialsActivated " + activated.Activations.Count + " blast(s)";
-
-            if (gameEvent is CellsCleared cleared)
-                return "CellsCleared " + cleared.Cells.Count + " cell(s)";
-
-            if (gameEvent is SpecialCreated created)
-                return "SpecialCreated " + created.Kind + " at " + created.Cell
-                    + " from " + created.SourceCells.Count + " piece(s)";
-
-            if (gameEvent is PiecesFell fell)
-                return "PiecesFell " + fell.Moves.Count + " move(s)";
-
-            if (gameEvent is PiecesSpawned spawned)
-                return "PiecesSpawned " + spawned.Pieces.Count + " piece(s)";
-
-            // An event type with no case above still shows its name.
-            return gameEvent.GetType().Name;
+            for (int round = 1; round <= GameRules.RoundCount; round++)
+            {
+                Console.WriteLine("Round " + round + "        "
+                                  + match.RoundResults[round]
+                                  + ", damage " + match.RoundDamage[round]);
+            }
         }
     }
 }

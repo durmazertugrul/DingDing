@@ -13,7 +13,7 @@ public class EventPlayer : MonoBehaviour
     public BoardView boardView;
     public FxPool fxPool;
     public ScreenShake screenShake;
-
+    public HudView hudView;
     public AnimationSettings settings = new AnimationSettings();
 
     public Sprite starSprite;
@@ -41,24 +41,38 @@ public class EventPlayer : MonoBehaviour
         {
             if (gameEvent is PiecesSwapped swapped)
                 yield return PlaySwap(swapped);
+
             else if (gameEvent is SpecialsActivated activated)
                 yield return PlayActivations(activated);
+
             else if (gameEvent is CellsCleared cleared)
                 yield return PlayClear(cleared);
+
             else if (gameEvent is SpecialCreated created)
                 yield return PlaySpecialCreated(created);
+
             else if (gameEvent is PiecesFell fell)
                 yield return PlayFall(fell);
+
             else if (gameEvent is PiecesSpawned spawned)
                 yield return PlaySpawn(spawned);
+
             else if (gameEvent is BoardShuffled shuffled)
                 yield return PlayShuffle(shuffled);
+
+            else if (gameEvent is OpponentDamaged damaged)
+                  PlayDamage(damaged);
         }
 
         IsPlaying = false;
     }
 
-
+    // The health bar runs alongside the pops instead of waiting for them.
+    private void PlayDamage(OpponentDamaged damaged)
+    {
+        hudView.ApplyDamage(damaged.HealthAfter);
+    }
+        
     private IEnumerator PlayShuffle(BoardShuffled shuffled)
     {
         // The tiles gather in the middle, then the new layout spreads out.
@@ -219,9 +233,9 @@ public class EventPlayer : MonoBehaviour
         }
 
         // A soft glow behind the new piece while it grows.
-        fxPool.PlayBurst(glowSprite, goldColor, targetPosition,
-            boardView.CellSize.x * 2f, settings.specialGrowDuration, 1.4f);
+        fxPool.PlayBurst(glowSprite, goldColor, targetPosition,boardView.CellSize.x * 2f, settings.specialGrowDuration, 1.4f);
 
+        boardView.ReturnTileAt(created.Cell);
         TileView specialTile = boardView.PlaceSpecial(created.Cell, created.Kind);
         yield return specialTile.GrowFromZero(settings).WaitForCompletion();
     }

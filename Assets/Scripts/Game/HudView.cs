@@ -61,21 +61,34 @@ public class HudView : MonoBehaviour
     // Called once the animations of a move have finished.
     public void Refresh()
     {
+        Refresh(true);
+    }
+
+    // The corner holds the card slots back until the picked card has
+    // finished flying into one.
+    public void Refresh(bool includeCardSlots)
+    {
         RefreshRoundDots();
         RefreshMoves();
         RefreshScore();
-        RefreshCardSlots();
+
+        if (includeCardSlots)
+            RefreshCardSlots();
     }
 
     // Called for every hit, while the move is still playing, so the bar
     // moves with the pieces instead of after them.
-    public void ApplyDamage(int healthAfter)
+    public void ApplyDamage(int damage, int healthAfter)
     {
         int maxHealth = match.Level.StartingHealth;
         bool isKnockout = healthAfter == 0;
 
         healthBar.ApplyDamage(healthAfter, maxHealth);
         opponentFace.Refresh(healthAfter, maxHealth, isKnockout);
+
+        // A hit worth a tenth of the pool shakes the face as hard as it goes.
+        float strength = (float)damage / (maxHealth * 0.1f);
+        opponentFace.TakeHit(strength);
     }
 
     private void RefreshRoundDots()
@@ -158,4 +171,11 @@ public class HudView : MonoBehaviour
             cardSlots[index].gameObject.SetActive(true);
         }
     }
+
+    // Where a card should fly to when it is picked in the corner.
+    public RectTransform SlotTransformFor(int slotIndex)
+    {
+        return cardSlots[slotIndex].rectTransform;
+    }
+        
 }

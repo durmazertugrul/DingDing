@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceadd8b098e39b94b9483fbe158ef993, type: 3}
+  m_Name: Veteran
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerDefinition
+  displayName: Veteran
+  openSprites:
+  - {fileID: 21300000, guid: 37f2cb932e6b9c848891413da19d56d6, type: 3}
+  - {fileID: 21300000, guid: 59fe43425414ceb478738fe318b83894, type: 3}
+  - {fileID: 21300000, guid: 8352be7b211dabf419d2a613728812bb, type: 3}
+  - {fileID: 21300000, guid: 45eca23d7c39c4d4b9ca362db6eec328, type: 3}
+  blinkSprites:
+  - {fileID: 21300000, guid: 3d00e6f126e58994092efdb3239933c9, type: 3}
+  - {fileID: 21300000, guid: 26342b25645eedd43aad122bdb5c77fb, type: 3}
+  - {fileID: 21300000, guid: 44bcc417ab0c463489477d13da44ec72, type: 3}
+  - {fileID: 21300000, guid: 525bdf362aba7184f9ddc0894391a3a6, type: 3}

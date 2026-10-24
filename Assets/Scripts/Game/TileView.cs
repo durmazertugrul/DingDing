@@ -14,8 +14,14 @@ public class TileView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     public Cell Cell { get; set; }
     public Piece Piece { get; private set; }
     private Tween wobbleTween;
-
+    private Tween idleTween;
     public RectTransform RectTransform { get; private set; }
+    public Image glowImage;
+    public Color specialGlowColor = new Color(0.96f, 0.73f, 0.23f, 0.75f);
+    public float swayDuration = 0.55f;
+    public float swayAngle = 6f;
+    public float glowPulseDuration = 0.8f;
+    private Tween glowTween;
 
     private void Awake()
     {
@@ -26,6 +32,35 @@ public class TileView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     {
         Piece = piece;
         image.sprite = sprite;
+        StartIdle(piece);
+    }
+
+    private void StartIdle(Piece piece)
+    {
+        if (idleTween != null && idleTween.IsActive()) idleTween.Kill();
+        if (glowTween != null && glowTween.IsActive()) glowTween.Kill();
+
+        RectTransform.localRotation = Quaternion.identity;
+
+        if (!piece.IsSpecial())
+        {
+            glowImage.gameObject.SetActive(false);
+            return;
+        }
+
+        RectTransform.localRotation = Quaternion.Euler(0f, 0f, -swayAngle);
+        idleTween = RectTransform.DOLocalRotate(new Vector3(0f, 0f, swayAngle), swayDuration).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutSine);
+
+        glowImage.gameObject.SetActive(true);
+        glowImage.rectTransform.localScale = Vector3.one;
+        glowImage.color = new Color(specialGlowColor.r, specialGlowColor.g, specialGlowColor.b, specialGlowColor.a * 0.45f);
+
+        Sequence glowSequence = DOTween.Sequence();
+        glowSequence.Join(glowImage.rectTransform.DOScale(1.08f, glowPulseDuration).SetEase(Ease.InOutSine));
+        glowSequence.Join(glowImage.DOFade(specialGlowColor.a, glowPulseDuration).SetEase(Ease.InOutSine));
+        glowSequence.SetLoops(-1, LoopType.Yoyo);
+
+        glowTween = glowSequence;
     }
 
     public void SetPosition(Vector2 anchoredPosition)
@@ -59,6 +94,13 @@ public class TileView : MonoBehaviour, IPointerDownHandler, IDragHandler, IPoint
     public void ResetVisualState()
     {
         RectTransform.DOKill();
+
+        if (idleTween != null && idleTween.IsActive()) idleTween.Kill();
+        if (glowTween != null && glowTween.IsActive()) glowTween.Kill();
+
+        idleTween = null;
+        glowTween = null;
+        glowImage.gameObject.SetActive(false);
         RectTransform.localScale = Vector3.one;
         RectTransform.localRotation = Quaternion.identity;
     }

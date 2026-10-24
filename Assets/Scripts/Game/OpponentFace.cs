@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,17 @@ public class OpponentFace : MonoBehaviour
     private FaceState state = FaceState.Fresh;
     private float timeUntilBlink;
     private float blinkTimeLeft;
+
+    public float hitShakeStrength = 12f;
+    public float hitShakeDuration = 0.25f;
+    public Color hitFlashColor = new Color(1f, 0.78f, 0.78f);
+    private Tween hitTween;
+    private Vector2 restPosition;
+
+    private void Awake()
+    {
+        restPosition = faceImage.rectTransform.anchoredPosition;
+    }
 
     public void SetBoxer(BoxerDefinition definition)
     {
@@ -73,7 +85,29 @@ public class OpponentFace : MonoBehaviour
 
         faceImage.sprite = boxer.openSprites[(int)state];
     }
-       
+
+
+    // A hit has to be felt somewhere other than the bar, so the face takes
+    // a knock. Strength runs from 0 to 1; a cascade hit lands harder.
+    public void TakeHit(float strength)
+    {
+        if (hitTween != null && hitTween.IsActive())
+            hitTween.Kill();
+
+        faceImage.rectTransform.anchoredPosition = restPosition;
+        faceImage.color = Color.white;
+
+        float punch = hitShakeStrength * Mathf.Clamp01(0.4f + strength);
+
+        hitTween = faceImage.rectTransform
+            .DOPunchAnchorPos(new Vector2(-punch, -punch * 0.4f),
+                              hitShakeDuration, 8, 0.6f)
+            .OnComplete(() =>
+                faceImage.rectTransform.anchoredPosition = restPosition);
+
+        faceImage.color = hitFlashColor;
+        faceImage.DOColor(Color.white, hitShakeDuration);
+    }
 }
 
     

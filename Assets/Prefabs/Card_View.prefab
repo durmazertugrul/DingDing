@@ -73,8 +73,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 16, y: -280}
-  m_SizeDelta: {x: 268.35, y: 117.236}
+  m_AnchoredPosition: {x: 24, y: -280}
+  m_SizeDelta: {x: 252, y: 117.236}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7546099610903835486
 CanvasRenderer:
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
-  m_lineSpacing: 0
+  m_lineSpacing: -15
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
@@ -324,7 +324,8 @@ GameObject:
   - component: {fileID: 3528726970155671442}
   - component: {fileID: 4579058986778889236}
   - component: {fileID: 5511234041430594747}
-  - component: {fileID: 7998107500958365954}
+  - component: {fileID: 2833528926686640273}
+  - component: {fileID: 3909495625420448671}
   m_Layer: 5
   m_Name: Card_View
   m_TagString: Untagged
@@ -391,7 +392,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7998107500958365954
+--- !u!114 &2833528926686640273
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -400,41 +401,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 6659631657131682071}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 082984d3e4e845941bdcec728d3299ba, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
-  m_Navigation:
-    m_Mode: 3
-    m_WrapAround: 0
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_SelectedTrigger: Selected
-    m_DisabledTrigger: Disabled
+  m_EditorClassIdentifier: Assembly-CSharp::CardView
+  rectTransform: {fileID: 3528726970155671442}
+  canvasGroup: {fileID: 3909495625420448671}
+  backImage: {fileID: 3868707619752253109}
+  faceRoot: {fileID: 1588062969224306377}
+  artImage: {fileID: 4219212878637609517}
+  titleText: {fileID: 5417382283694696430}
+  effectText: {fileID: 2277765792592933749}
+  flipHalfDuration: 0.12
+  flipHopHeight: 50
+  flipRiseScale: 1.07
+--- !u!225 &3909495625420448671
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6659631657131682071}
+  m_Enabled: 1
+  m_Alpha: 1
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 5511234041430594747}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls: []
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7036111574129670041
 GameObject:
   m_ObjectHideFlags: 0

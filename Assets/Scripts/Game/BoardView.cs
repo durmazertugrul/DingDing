@@ -203,14 +203,21 @@ public class BoardView : MonoBehaviour
     }
 
     // Effect sprites are white, so they take the colour of the piece that popped.
+    public Color ColorOf(PieceColor color)
+    {
+        return normalFxColors[(int)color];
+    }
+
+    public Sprite SpriteOf(PieceColor color)
+    {
+        return normalSprites[(int)color];
+    }
     public Color ColorOf(Piece piece)
     {
         if (piece.IsSpecial())
             return specialFxColor;
 
-        return normalFxColors[(int)piece.Color];
+        return ColorOf(piece.Color);
     }
-
-
 
 }

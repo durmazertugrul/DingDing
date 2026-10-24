@@ -70,9 +70,11 @@ public class EventPlayer : MonoBehaviour
     // The health bar runs alongside the pops instead of waiting for them.
     private void PlayDamage(OpponentDamaged damaged)
     {
-        hudView.ApplyDamage(damaged.HealthAfter);
+        hudView.ApplyDamage(damaged.Amount, damaged.HealthAfter);
     }
-        
+
+
+
     private IEnumerator PlayShuffle(BoardShuffled shuffled)
     {
         // The tiles gather in the middle, then the new layout spreads out.
@@ -214,26 +216,31 @@ public class EventPlayer : MonoBehaviour
     private IEnumerator PlaySpecialCreated(SpecialCreated created)
     {
         Vector2 targetPosition = boardView.PositionOf(created.Cell);
-        Sequence mergeSequence = DOTween.Sequence();
 
-        foreach (var sourceCell in created.SourceCells)
+        // A special born at the start of a round has no pieces sliding into
+        // it, and an empty sequence never completes.
+        if (created.SourceCells.Count > 0)
         {
-            TileView tileView = boardView.TileAt(sourceCell);
-            if (tileView == null) continue;
+            Sequence mergeSequence = DOTween.Sequence();
 
-            mergeSequence.Join(tileView.MoveTo(targetPosition,
-                settings.specialMergeDuration, Ease.InQuad));
-        }
+            foreach (var sourceCell in created.SourceCells)
+            {
+                TileView tileView = boardView.TileAt(sourceCell);
+                if (tileView == null) continue;
 
-        yield return mergeSequence.WaitForCompletion();
+                mergeSequence.Join(tileView.MoveTo(targetPosition, settings.specialMergeDuration, Ease.InQuad));
+            }
 
-        foreach (var sourceCell in created.SourceCells)
-        {
-            boardView.ReturnTileAt(sourceCell);
+            yield return mergeSequence.WaitForCompletion();
+
+            foreach (var sourceCell in created.SourceCells)
+            {
+                boardView.ReturnTileAt(sourceCell);
+            }
         }
 
         // A soft glow behind the new piece while it grows.
-        fxPool.PlayBurst(glowSprite, goldColor, targetPosition,boardView.CellSize.x * 2f, settings.specialGrowDuration, 1.4f);
+        fxPool.PlayBurst(glowSprite, goldColor, targetPosition, boardView.CellSize.x * 2f, settings.specialGrowDuration, 1.4f);
 
         boardView.ReturnTileAt(created.Cell);
         TileView specialTile = boardView.PlaceSpecial(created.Cell, created.Kind);

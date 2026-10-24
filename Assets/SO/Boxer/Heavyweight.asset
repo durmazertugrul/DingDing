@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ceadd8b098e39b94b9483fbe158ef993, type: 3}
+  m_Name: Heavyweight
+  m_EditorClassIdentifier: Assembly-CSharp::BoxerDefinition
+  displayName: Heavyweight
+  openSprites:
+  - {fileID: 21300000, guid: 6a7395122bb83d94ba997a2e3aab784a, type: 3}
+  - {fileID: 21300000, guid: 25fdc9a928bcc3848b11aa689f0a4ce5, type: 3}
+  - {fileID: 21300000, guid: 6738765b5521f414e8ee23e735e595b2, type: 3}
+  - {fileID: 21300000, guid: b70cde63fb93cb441859df2821f4e749, type: 3}
+  blinkSprites:
+  - {fileID: 21300000, guid: 6d1acceb7973fe948b486344d88e6e05, type: 3}
+  - {fileID: 21300000, guid: 964de0eb3a0a9b742aa5e0586258f2ed, type: 3}
+  - {fileID: 21300000, guid: 42adfbf165d24c04abf3a8da38488d06, type: 3}
+  - {fileID: 21300000, guid: 50e41354c7a2cd0488180135899fb27b, type: 3}

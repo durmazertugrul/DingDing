@@ -16,6 +16,8 @@ public class MatchController : MonoBehaviour
     public int seed = 0;            // zero means a new match every time
 
     private Match match;
+    public CornerScreen cornerScreen;
+    public MatchEndSequence matchEnd;
 
     private void Start()
     {
@@ -67,17 +69,14 @@ public class MatchController : MonoBehaviour
 
         if (match.Outcome == MatchOutcome.Knockout)
         {
-            Debug.Log("KNOCKOUT, score " + match.Score);
+            matchEnd.Begin(match);
             yield break;
         }
 
         hud.Refresh();
 
-        if (match.Phase == MatchPhase.Corner)
-            Debug.Log("CORNER, round " + match.CurrentRound + " is over");
-
-        if (match.Phase == MatchPhase.Finished)
-            Debug.Log("LOSS ON POINTS, score " + match.Score);
+        if (match.Phase == MatchPhase.Corner) cornerScreen.Open(match);
+        if (match.Phase == MatchPhase.Finished) matchEnd.Begin(match);
     }
 
     // The engine turned the action down; nothing changed on the board.

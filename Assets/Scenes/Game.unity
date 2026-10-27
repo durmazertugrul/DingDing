@@ -5143,7 +5143,7 @@ MonoBehaviour:
   cornerScreen: {fileID: 1887537928}
   matchEnd: {fileID: 924878834}
   testLevelNumber: 0
-  seed: 42
+  seed: 0
 --- !u!114 &924878831
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 2328705967471815023}
   - component: {fileID: 3831186381972661708}
   - component: {fileID: 7817721298379475688}
+  - component: {fileID: 6116487792971549355}
   m_Layer: 5
   m_Name: Level_Row
   m_TagString: Untagged
@@ -232,12 +233,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
   m_IgnoreLayout: 0
   m_MinWidth: -1
-  m_MinHeight: 132
+  m_MinHeight: 160
   m_PreferredWidth: -1
-  m_PreferredHeight: 132
+  m_PreferredHeight: 160
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6116487792971549355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3620063855638432089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14fa5a4f6085a3949b57c9eb7e9e0e2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelRow
+  background: {fileID: 3831186381972661708}
+  levelLabel: {fileID: 1606566881083944760}
+  difficultyTag: {fileID: 699604207909445746}
+  lockIcon: {fileID: 8037859810226956588}
+  fightButton: {fileID: 5463972803262120411}
+  doneTick: {fileID: 8041865166172836983}
+  lockedBackground: {fileID: 21300000, guid: fa3f313f70c960240b81245b44e3e1ee, type: 3}
+  currentBackground: {fileID: 21300000, guid: 3d2c5d226b4563340b7bf3e6ffd4a362, type: 3}
+  completedBackground: {fileID: 21300000, guid: 133e7543780fffa46972dd89feabb046, type: 3}
+  normalTagOnNavy: {fileID: 21300000, guid: 54596aafe536b0e4081d6fb429fea9eb, type: 3}
+  normalTagOnCream: {fileID: 21300000, guid: 659d9018c8b7d0d4781f89ebb8674ed0, type: 3}
+  hardTag: {fileID: 21300000, guid: 08800d2da79228b4ca441e687b264428, type: 3}
+  superHardTag: {fileID: 21300000, guid: cc28b9c7a1947834f83aa9d54a603c1a, type: 3}
 --- !u!1 &5463972803262120411
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,8 +299,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 700, y: -18}
-  m_SizeDelta: {x: 250, y: 86}
+  m_AnchoredPosition: {x: 735, y: -26.5}
+  m_SizeDelta: {x: 202, y: 69}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6202653674055125223
 CanvasRenderer:
@@ -357,7 +383,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8703262219533092251}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 6116487792971549355}
+        m_TargetAssemblyTypeName: LevelRow, Assembly-CSharp
+        m_MethodName: OnFightPressed
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8037859810226956588
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using DingDing.Core;
 using DingDing.Core.Cards;
 using DG.Tweening;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ public class HudView : MonoBehaviour
 
     public TMP_Text movesText;
     public TMP_Text scoreText;
+    public TMP_Text levelText;
 
     public Image[] roundDots;           // three, left to right
     public Sprite activeDotSprite;      // the round being played
@@ -36,6 +38,9 @@ public class HudView : MonoBehaviour
     private Color normalMovesColor;
     private int displayedScore;
     private Tween scoreTween;
+    private bool movesWarningPlayed;
+
+    public int MaxHealth { get { return match.Level.StartingHealth; } }
 
     private void Awake()
     {
@@ -48,12 +53,14 @@ public class HudView : MonoBehaviour
     {
         match = boundMatch;
 
+        levelText.text = "LEVEL " + match.Level.Number;
+
         opponentFace.SetBoxer(levelBoxers.BoxerFor(match.Level.Number));
-        opponentFace.Refresh(match.OpponentHealth, match.Level.StartingHealth,false);
+        opponentFace.Refresh(match.OpponentHealth, match.Level.StartingHealth, false);
         healthBar.SetInstantly(match.OpponentHealth, match.Level.StartingHealth);
 
         displayedScore = match.Score;
-        scoreText.text = displayedScore.ToString("N0");
+        scoreText.text = displayedScore.ToString("N0", CultureInfo.InvariantCulture);
 
         Refresh();
     }
@@ -72,8 +79,7 @@ public class HudView : MonoBehaviour
         RefreshMoves();
         RefreshScore();
 
-        if (includeCardSlots)
-            RefreshCardSlots();
+        if (includeCardSlots) RefreshCardSlots();
     }
 
     // Called for every hit, while the move is still playing, so the bar
@@ -97,12 +103,9 @@ public class HudView : MonoBehaviour
         {
             int roundNumber = index + 1;
 
-            if (roundNumber < match.CurrentRound)
-                roundDots[index].sprite = passedDotSprite;
-            else if (roundNumber == match.CurrentRound)
-                roundDots[index].sprite = activeDotSprite;
-            else
-                roundDots[index].sprite = futureDotSprite;
+            if (roundNumber < match.CurrentRound) roundDots[index].sprite = passedDotSprite;
+            else if (roundNumber == match.CurrentRound) roundDots[index].sprite = activeDotSprite;
+            else roundDots[index].sprite = futureDotSprite;
         }
     }
 
@@ -112,41 +115,38 @@ public class HudView : MonoBehaviour
 
         // An endless pulse has to be stopped, or the text stays enlarged
         // once the count climbs back above the warning line.
-        if (movesPulse != null && movesPulse.IsActive())
-            movesPulse.Kill();
+        if (movesPulse != null && movesPulse.IsActive()) movesPulse.Kill();
 
         movesText.rectTransform.localScale = Vector3.one;
 
         if (match.MovesLeftInRound <= lowMoveWarning)
         {
+            // Once per round, when the count first drops to the warning line.
+            if (!movesWarningPlayed)
+            {
+                AudioManager.Instance.Play(AudioManager.Instance.sounds.movesWarning);
+                movesWarningPlayed = true;
+            }
+
             movesText.color = lowMovesColor;
             movesPulse = movesText.rectTransform.DOScale(1.15f, 0.5f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.InOutQuad);
         }
         else
         {
+            movesWarningPlayed = false;
             movesText.color = normalMovesColor;
         }
     }
 
     private void RefreshScore()
     {
-        if (displayedScore == match.Score)
-            return;
+        if (displayedScore == match.Score) return;
 
-        if (scoreTween != null && scoreTween.IsActive())
-            scoreTween.Kill();
+        if (scoreTween != null && scoreTween.IsActive()) scoreTween.Kill();
 
         // The number runs up to the new total instead of jumping, and the
         // box takes a knock so the gain is felt.
-        scoreTween = DOTween.To(
-                () => displayedScore,
-                value =>
-                {
-                    displayedScore = value;
-                    scoreText.text = value.ToString("N0");
-                },
-                match.Score,
-                scoreCountDuration).SetEase(Ease.OutCubic);
+        scoreTween = DOTween.To(() => displayedScore, value => { displayedScore = value; scoreText.text = value.ToString("N0", CultureInfo.InvariantCulture); }, match.Score, scoreCountDuration).SetEase(Ease.OutCubic);
 
         scoreText.rectTransform.DOKill();
         scoreText.rectTransform.localScale = Vector3.one;
@@ -167,7 +167,7 @@ public class HudView : MonoBehaviour
 
             CardInfo card = match.ChosenCards[index];
 
-            cardSlots[index].sprite = card.CardClass == CardClass.Attack? attackBackSprite: tacticBackSprite;
+            cardSlots[index].sprite = card.CardClass == CardClass.Attack ? attackBackSprite : tacticBackSprite;
             cardSlots[index].gameObject.SetActive(true);
         }
     }
@@ -177,5 +177,4 @@ public class HudView : MonoBehaviour
     {
         return cardSlots[slotIndex].rectTransform;
     }
-        
 }

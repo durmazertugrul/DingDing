@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25fd6da55a2bca74fa4866b214022cbf, type: 3}
+  m_Name: GameSounds
+  m_EditorClassIdentifier: Assembly-CSharp::GameSounds
+  swap: {fileID: 8300000, guid: c432dec4d246a094d897e8f95f60c184, type: 3}
+  swapInvalid: {fileID: 8300000, guid: 24c8ef4388dce8a48a6fe6e6d9947760, type: 3}
+  tileNudge: {fileID: 8300000, guid: 4987a1fdb36700f42a94fa5dc7094060, type: 3}
+  matchPops:
+  - {fileID: 8300000, guid: 7e9c70f568eca5d429d827d2f0ec58c8, type: 3}
+  - {fileID: 8300000, guid: 46fb4107a6c6fb243a6377a6294697cc, type: 3}
+  - {fileID: 8300000, guid: e8e3a1cdffc7d1547b8723982d433cd6, type: 3}
+  - {fileID: 8300000, guid: 59221ceacb64afd4c8a708c665670a50, type: 3}
+  - {fileID: 8300000, guid: 6aea272c1ec18c04a83d00b34349220c, type: 3}
+  specialCreate: {fileID: 8300000, guid: 95dd24d0b134af94cb8f7d3ff432c1a3, type: 3}
+  medalBlast: {fileID: 8300000, guid: cd93149cb65de9b488ebdf780a8c1932, type: 3}
+  trophyBlast: {fileID: 8300000, guid: 01981bf7d4a13604d94303648adc71cd, type: 3}
+  beltBlast: {fileID: 8300000, guid: e94ee7a499f5a39408ed7ba7b8aee73b, type: 3}
+  gongBlast: {fileID: 8300000, guid: a87bed4cffba57b489e18491f11bfc95, type: 3}
+  shuffle: {fileID: 8300000, guid: cc0d14719b9fdab4b8b1db128af17bec, type: 3}
+  movesWarning: {fileID: 8300000, guid: abd0ac28d24f9314fb1094737647479a, type: 3}
+  punchLight: {fileID: 8300000, guid: 67c0766dd5104954ab7008fc4ae424d5, type: 3}
+  punchHeavy: {fileID: 8300000, guid: ed6f97e70ae9d0840b430e5fa5e47603, type: 3}
+  knockout: {fileID: 8300000, guid: 031151883de1c9c459b0abc8955dd97a, type: 3}
+  crowdCheer: {fileID: 8300000, guid: 37a9a54271044d348960bf67920345f7, type: 3}
+  bell: {fileID: 8300000, guid: 5e4511391a24c08448f3f7e4aa1c261f, type: 3}
+  bellLong: {fileID: 8300000, guid: ef2be3f799d1e6141b38d91522e5a872, type: 3}
+  cardFlip: {fileID: 8300000, guid: cfdf9ec941f5a8f4ea996f3c5654209a, type: 3}
+  cardSelect: {fileID: 8300000, guid: a67ff38dcd4576440a5dc5f8ee32f832, type: 3}
+  cardActivate: {fileID: 8300000, guid: 2bcf18fa8a5fbbf48ab8b8d6295e1d2e, type: 3}
+  uiTap: {fileID: 8300000, guid: eea16a27fbb906d44b1550026f5744f2, type: 3}
+  uiBack: {fileID: 8300000, guid: 020c851c7f4b68044a62068150193931, type: 3}
+  pause: {fileID: 8300000, guid: 38c5f9456fe51e64f9af1cd5712ffac2, type: 3}
+  levelUnlock: {fileID: 8300000, guid: e6001074f0d80144f9ac6d9dac9d0948, type: 3}
+  resultWin: {fileID: 8300000, guid: aaa6e4bc97f41f945971206e67c9225f, type: 3}
+  resultLose: {fileID: 8300000, guid: 91c8b50cb6e01ec478b92078d655e552, type: 3}
+  scoreTick: {fileID: 8300000, guid: 703a346059e059c4c8a317b5cc199ec4, type: 3}
+  titleWin: {fileID: 8300000, guid: f6cc474b31a593a4784467b1d97d58c5, type: 3}

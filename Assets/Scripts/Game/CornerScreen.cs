@@ -41,11 +41,16 @@ public class CornerScreen : MonoBehaviour
     private bool cardsRevealed;
     private Vector2 boardRestPosition;
 
+    private GameSounds Sounds { get { return AudioManager.Instance.sounds; } }
+
     public void Open(Match openMatch)
     {
         match = openMatch;
         isClosing = false;
         cardsRevealed = false;
+
+        // The round that just ended.
+        AudioManager.Instance.Play(Sounds.bellLong);
 
         // The panel has to be awake to run coroutines, so it is the content
         // that stays invisible rather than the object itself.
@@ -147,7 +152,11 @@ public class CornerScreen : MonoBehaviour
         {
             lastWholeSecond = wholeSeconds;
 
-            if (wholeSeconds <= timerRing.warningSeconds && wholeSeconds > 0) timerRing.Pulse();
+            if (wholeSeconds <= timerRing.warningSeconds && wholeSeconds > 0)
+            {
+                AudioManager.Instance.Play(Sounds.movesWarning);
+                timerRing.Pulse();
+            }
         }
 
         if (secondsLeft <= 0f)
@@ -162,6 +171,8 @@ public class CornerScreen : MonoBehaviour
     private Sequence FlipAll()
     {
         cardsRevealed = true;
+
+        AudioManager.Instance.Play(Sounds.cardFlip);
 
         Sequence sequence = DOTween.Sequence();
 
@@ -206,6 +217,8 @@ public class CornerScreen : MonoBehaviour
         timerRunning = false;
         timerRing.Stop();
 
+        AudioManager.Instance.Play(Sounds.cardSelect);
+
         // Called before the flight, because the slot it flies to is the one
         // this card is about to fill.
         List<object> events = MatchFlow.SelectCornerCard(match, chosen.Offer);
@@ -227,6 +240,8 @@ public class CornerScreen : MonoBehaviour
 
         yield return flight.WaitForCompletion();
 
+        AudioManager.Instance.Play(Sounds.cardActivate);
+
         hud.Refresh(true);
 
         foreach (var cardView in cardViews)
@@ -240,6 +255,9 @@ public class CornerScreen : MonoBehaviour
         contentGroup.blocksRaycasts = false;
 
         yield return boardRoot.DOAnchorPosY(boardRestPosition.y, boardSlideDuration).SetEase(Ease.OutQuad).WaitForCompletion();
+
+        // The new round opens.
+        AudioManager.Instance.Play(Sounds.bell);
 
         // Early Attack and Coach's Advice drop a special piece on the board.
         yield return eventPlayer.PlayEvents(events);

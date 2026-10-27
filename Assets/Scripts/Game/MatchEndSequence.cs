@@ -34,6 +34,15 @@ public class MatchEndSequence : MonoBehaviour
             yield return new WaitForSeconds(lossHold);
         }
 
+        ProgressStore.OnMatchFinished(match, GameSession.SelectedLevelNumber);
+
+        if (match.Outcome == MatchOutcome.Knockout)
+        {
+            AudioManager.Instance.Play(AudioManager.Instance.sounds.crowdCheer);
+
+            if (GameSession.SelectedLevelNumber == LevelTable.LevelCount) AudioManager.Instance.Play(AudioManager.Instance.sounds.titleWin);
+        }
+
         gameRoot.SetActive(false);
         resultScreen.Show(match);
     }

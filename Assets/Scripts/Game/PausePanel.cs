@@ -17,6 +17,8 @@ public class PausePanel : MonoBehaviour
         IsPaused = true;
         Time.timeScale = 0f;
 
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.pause);
+
         gameRoot.SetActive(false);
         root.SetActive(true);
     }
@@ -26,6 +28,8 @@ public class PausePanel : MonoBehaviour
         IsPaused = false;
         Time.timeScale = 1f;
 
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiBack);
+
         root.SetActive(false);
         gameRoot.SetActive(true);
     }
@@ -33,12 +37,16 @@ public class PausePanel : MonoBehaviour
     public void Retry()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiTap);
+        SceneManager.LoadScene(SceneNames.Game);
     }
 
     public void MainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiBack);
+        SceneManager.LoadScene(SceneNames.MainMenu);
     }
 }

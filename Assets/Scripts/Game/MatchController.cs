@@ -11,16 +11,21 @@ public class MatchController : MonoBehaviour
     public BoardView boardView;
     public EventPlayer eventPlayer;
     public HudView hud;
-
-    public int levelNumber = 1;
-    public int seed = 0;            // zero means a new match every time
-
-    private Match match;
     public CornerScreen cornerScreen;
     public MatchEndSequence matchEnd;
 
+    public int testLevelNumber = 0;     // zero means ask GameSession
+    public int seed = 0;                // zero means a new match every time
+
+    private Match match;
+
     private void Start()
     {
+        int levelNumber = testLevelNumber != 0 ? testLevelNumber : GameSession.SelectedLevelNumber;
+
+        // Everything downstream reads the level from here, including the save.
+        GameSession.SelectedLevelNumber = levelNumber;
+
         LevelInfo level = LevelTable.GetLevel(levelNumber);
         int matchSeed = seed != 0 ? seed : Random.Range(1, int.MaxValue);
 
@@ -29,6 +34,8 @@ public class MatchController : MonoBehaviour
 
         boardView.BuildFrom(match.Board);
         hud.Bind(match);
+
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.bell);
 
         StartCoroutine(PlayAndFollowUp(startup.Events));
     }
@@ -47,8 +54,7 @@ public class MatchController : MonoBehaviour
     {
         // A second move while the first one is still playing would pull the
         // board and the tiles apart.
-        if (eventPlayer.IsPlaying)
-            return;
+        if (eventPlayer.IsPlaying) return;
 
         List<object> events = MatchFlow.PlayAction(match, action);
 
@@ -84,16 +90,18 @@ public class MatchController : MonoBehaviour
     {
         if (action.Type == ActionType.Tap)
         {
+            AudioManager.Instance.Play(AudioManager.Instance.sounds.tileNudge);
+
             TileView tappedTile = boardView.TileAt(action.FirstCell);
-            if (tappedTile != null)
-                tappedTile.Wobble(eventPlayer.settings);
+            if (tappedTile != null) tappedTile.Wobble(eventPlayer.settings);
             return;
         }
 
         TileView firstTile = boardView.TileAt(action.FirstCell);
         TileView secondTile = boardView.TileAt(action.SecondCell);
-        if (firstTile == null || secondTile == null)
-            return;
+        if (firstTile == null || secondTile == null) return;
+
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.swapInvalid);
 
         Vector2 firstPosition = boardView.PositionOf(action.FirstCell);
         Vector2 secondPosition = boardView.PositionOf(action.SecondCell);

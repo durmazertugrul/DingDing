@@ -4,6 +4,7 @@ using System.Collections;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 // Fills in the score card. Two separate cards exist in the scene, one for a
@@ -25,7 +26,9 @@ public class ResultScreen : MonoBehaviour
 
     public TMP_Text subtitleText;           // ROUND 2, MOVE 6
     public RoundRow[] knockoutRows;         // three, round one first
+    public GameObject movesLeftRow;         // stays on screen, never touched
     public TMP_Text movesLeftText;          // the number, not the label
+    public GameObject earlyKnockoutRow;     // stays on screen, never touched
     public TMP_Text earlyKnockoutText;      // the number, not the label
     public TMP_Text knockoutScoreText;
 
@@ -42,6 +45,9 @@ public class ResultScreen : MonoBehaviour
     public float totalCountDuration = 1f;
     public float markerPopDuration = 0.25f;
     public float stepGap = 0.15f;
+    public float scoreTickInterval = 0.06f;
+
+    private float lastScoreTickTime;
 
     public void Show(Match match)
     {
@@ -50,6 +56,8 @@ public class ResultScreen : MonoBehaviour
         root.SetActive(true);
         knockoutScreen.SetActive(isKnockout);
         lossScreen.SetActive(!isKnockout);
+
+        AudioManager.Instance.Play(isKnockout ? AudioManager.Instance.sounds.resultWin : AudioManager.Instance.sounds.resultLose);
 
         if (isKnockout)
         {
@@ -83,12 +91,10 @@ public class ResultScreen : MonoBehaviour
             RoundRow row = rows[round - 1];
             RoundResult result = match.RoundResults[round];
 
-            if (result == RoundResult.NotPlayed)
-                row.damageText.text = "-";
-            else
-                yield return CountUp(row.damageText, match.RoundDamage[round], damageCountDuration).WaitForCompletion();
+            if (result == RoundResult.NotPlayed) row.damageText.text = "-";
+            else yield return CountUp(row.damageText, match.RoundDamage[round], damageCountDuration).WaitForCompletion();
 
-            row.markerImage.sprite = MarkerFor(result);
+            row.markerImage.sprite = MarkerFor(result, isKnockout);
             yield return PopIn(row.markerImage.rectTransform).WaitForCompletion();
             yield return WaitFor(stepGap);
         }
@@ -111,21 +117,34 @@ public class ResultScreen : MonoBehaviour
         scoreText.rectTransform.DOPunchScale(Vector3.one * 0.25f, 0.35f, 1, 0.5f).SetUpdate(true);
     }
 
-    private Sprite MarkerFor(RoundResult result)
+    private Sprite MarkerFor(RoundResult result, bool isKnockout)
     {
-        if (result == RoundResult.Won) return wonMarker;
-        if (result == RoundResult.Lost) return lostMarker;
+        if (result == RoundResult.NotPlayed) return notPlayedMarker;
         if (result == RoundResult.Knockout) return knockoutMarker;
 
-        return notPlayedMarker;
+        // A tick on a match that was lost reads as a win, so the loss card
+        // gives every played round the neutral mark.
+        if (!isKnockout) return lostMarker;
+
+        return result == RoundResult.Won ? wonMarker : lostMarker;
     }
 
-    // Numbers run up the same way the score does during a match.
+    // Numbers run up the same way the score does during a match, with a tick
+    // that is capped so a long count does not turn into a buzz.
     private Tween CountUp(TMP_Text target, int finalValue, float duration)
     {
         int shownValue = 0;
 
-        return DOTween.To(() => shownValue, value => { shownValue = value; target.text = value.ToString("N0", CultureInfo.InvariantCulture); }, finalValue, duration).SetEase(Ease.OutCubic).SetUpdate(true);
+        return DOTween.To(() => shownValue, value => { shownValue = value; target.text = value.ToString("N0", CultureInfo.InvariantCulture); PlayTick(); }, finalValue, duration).SetEase(Ease.OutCubic).SetUpdate(true);
+    }
+
+    private void PlayTick()
+    {
+        // Unscaled, because the screen may open while the game is paused.
+        if (Time.unscaledTime - lastScoreTickTime < scoreTickInterval) return;
+
+        lastScoreTickTime = Time.unscaledTime;
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.scoreTick, 0.5f);
     }
 
     private Tween PopIn(RectTransform target)
@@ -139,5 +158,35 @@ public class ResultScreen : MonoBehaviour
     private IEnumerator WaitFor(float seconds)
     {
         yield return new WaitForSecondsRealtime(seconds);
+    }
+
+    // The level that just opened; if nothing opened, there is nowhere to go
+    // but the list.
+    public void OnContinue()
+    {
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiTap);
+
+        int nextLevel = ProgressStore.HighestUnlockedLevel;
+
+        if (nextLevel <= GameSession.SelectedLevelNumber)
+        {
+            SceneManager.LoadScene(SceneNames.Rankings);
+            return;
+        }
+
+        GameSession.SelectedLevelNumber = nextLevel;
+        SceneManager.LoadScene(SceneNames.Game);
+    }
+
+    public void OnRetry()
+    {
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiTap);
+        SceneManager.LoadScene(SceneNames.Game);
+    }
+
+    public void OnMainMenu()
+    {
+        AudioManager.Instance.Play(AudioManager.Instance.sounds.uiBack);
+        SceneManager.LoadScene(SceneNames.MainMenu);
     }
 }
